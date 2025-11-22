@@ -9,5 +9,5 @@ name = "pyuiua"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = "0.21.1"
-uiua = "0.11.1"
+pyo3 = { version = "0.27.1", features = ["extension-module"] }
+uiua = "0.17.2"
