@@ -13,15 +13,18 @@ uiua.push(["mixed types", 42, 3.14])
 # Retrieve and print the current stack
 print(f"{uiua.stack()=}")
 
+# See the stack when printing the repr
+print(f"{uiua=}")
+
 # Pop from the stack
 print(f"{uiua.pop()=}")
 
 # Run a command against the python added values on the stack
 print(f"Running + to sum top two values on the stack ({uiua.stack()})")
-uiua.run('+')
+uiua.run("+")
 print(f"{uiua.pop()=}")
 
-# Uses the uiua display representation
-uiua.push("Hello")
-uiua.run("°△3_3")
-print(f"{uiua=}")
+# pretty uses the uiua display representation
+print(code:="°△3_3")
+uiua.run(code)
+print(uiua.pretty())

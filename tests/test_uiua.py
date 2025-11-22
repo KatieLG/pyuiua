@@ -1,5 +1,6 @@
 import pytest
 
+
 def test_push_pop_scalars(uiua):
     uiua.push(42)
     assert len(uiua) == 1
@@ -66,7 +67,9 @@ def test_clear_stack(uiua):
         (9, "+1", 10),
     ],
 )
-def test_python_to_uiua_conversion(uiua, python_value: object, uiua_code: str, expected_value: object) -> None:
+def test_python_to_uiua_conversion(
+    uiua, python_value: object, uiua_code: str, expected_value: object
+) -> None:
     uiua.push(python_value)
     uiua.run(uiua_code)
     assert uiua.pop() == expected_value
