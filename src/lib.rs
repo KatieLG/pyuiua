@@ -2,15 +2,14 @@
 
 use pyo3::prelude::*;
 
-mod api;
 mod convert;
+mod uiua_runtime;
 
-use api::{uiua_eval, uiua_stack};
+use uiua_runtime::PyUiua;
 
 /// Create the pyuiua module
 #[pymodule]
 fn pyuiua(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(uiua_eval, m)?)?;
-    m.add_function(wrap_pyfunction!(uiua_stack, m)?)?;
+    m.add_class::<PyUiua>()?;
     Ok(())
 }

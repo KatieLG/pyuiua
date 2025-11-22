@@ -3,10 +3,13 @@ use pyo3::types::PyList;
 use uiua::{Uiua, Value};
 
 /// Convert a Uiua Value to a Python object
-pub fn value_to_pyobject<'py>(py: Python<'py>, value: Value, uiua: &Uiua) -> PyResult<Bound<'py, PyAny>> {
-
+pub fn value_to_pyobject<'py>(
+    py: Python<'py>,
+    value: Value,
+    uiua: &Uiua,
+) -> PyResult<Bound<'py, PyAny>> {
     // check if scalar
-    if value.shape.is_empty(){ 
+    if value.shape.is_empty() {
         // Try as int
         if let Ok(i) = value.as_int(uiua, "") {
             return Ok(i.into_pyobject(py)?.into_any());
@@ -29,16 +32,19 @@ pub fn value_to_pyobject<'py>(py: Python<'py>, value: Value, uiua: &Uiua) -> PyR
         }
 
         // otherwise return None
-        return Ok(py.None().into_bound(py).into_any())
+        return Ok(py.None().into_bound(py).into_any());
     }
 
     // if not scalar - return a list
-    return array_to_pylist(py, &value, uiua)
+    return array_to_pylist(py, &value, uiua);
 }
 
 /// Convert a Uiua Array to a nested Python list
-fn array_to_pylist<'py>(py: Python<'py>, value: &Value, uiua: &Uiua) -> PyResult<Bound<'py, PyAny>> {
-
+fn array_to_pylist<'py>(
+    py: Python<'py>,
+    value: &Value,
+    uiua: &Uiua,
+) -> PyResult<Bound<'py, PyAny>> {
     // Check if this is a string (character array)
     if let Ok(s) = value.as_string(uiua, "") {
         return Ok(s.into_pyobject(py)?.into_any());
@@ -75,4 +81,3 @@ fn array_to_pylist<'py>(py: Python<'py>, value: &Value, uiua: &Uiua) -> PyResult
 
     Ok(list.into_any())
 }
-

@@ -1,7 +1,6 @@
 from typing import TypeAlias
 
 import pytest
-import pyuiua as uiua
 
 Scalar: TypeAlias = int | float | str
 
@@ -23,9 +22,9 @@ Scalar: TypeAlias = int | float | str
     ],
 )
 def test_scalar_conversions(
-    code: str, expected_type: type, expected_value: Scalar
+    uiua, code: str, expected_type: type, expected_value: Scalar
 ) -> None:
-    """Test basic scalar type conversions."""
-    result = uiua.uiua_eval(code)
+    uiua.run(code)
+    result = uiua.pop()
     assert isinstance(result, expected_type)
     assert result == expected_value

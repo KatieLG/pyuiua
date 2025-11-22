@@ -1,7 +1,4 @@
-"""Tests for array conversions to Python lists."""
-
 import pytest
-import pyuiua as uiua
 
 
 @pytest.mark.parametrize(
@@ -14,14 +11,13 @@ import pyuiua as uiua
     ],
 )
 def test_flat_array_conversions(
-    code: str, expected_item_type: type | None, expected: list
+    uiua, code: str, expected_item_type: type | None, expected: list
 ) -> None:
-    """Test conversion of 1D Uiua arrays to Python lists."""
-    result = uiua.uiua_eval(code)
+    uiua.run(code)
+    result = uiua.pop()
     assert isinstance(result, list)
     assert result == expected
-    if expected_item_type is not None:
-        assert all(isinstance(x, expected_item_type) for x in result)
+    assert all(isinstance(x, expected_item_type) for x in result)
 
 
 @pytest.mark.parametrize(
@@ -32,12 +28,12 @@ def test_flat_array_conversions(
         ("↯3_3 ⇡9", [[0, 1, 2], [3, 4, 5], [6, 7, 8]]),
         # 3D arrays
         ("[[[1 2][3 4]][[5 6][7 8]]]", [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]),
-        # Array of floats
+        # 2D float array
         ("↯2_2 [1.1 2.2 3.3 4.4]", [[1.1, 2.2], [3.3, 4.4]]),
     ],
 )
-def test_multidimensional_array_conversions(code: str, expected: list) -> None:
-    """Test conversion of multi-dimensional Uiua arrays"""
-    result = uiua.uiua_eval(code)
+def test_multidimensional_array_conversions(uiua, code: str, expected: list) -> None:
+    uiua.run(code)
+    result = uiua.pop()
     assert isinstance(result, list)
     assert result == expected

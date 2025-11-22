@@ -1,18 +1,27 @@
-import pyuiua as uiua
+import pyuiua
 
-# 10 factorial
-ten_fact = uiua.uiua_eval("/×↘1⇡11")
-print(f"10 factorial: {ten_fact}")
+uiua = pyuiua.Uiua()
 
-# 10 factorial fixed
-ten_fact_array = uiua.uiua_eval("¤/×↘1⇡11")
-print(f"10 factorial fixed: {ten_fact_array}")
+# Run arbitrary Uiua code
+uiua.run('&p "Hello from Uiua!"')
 
-# Boxed array of mixed types
-boxed_array = uiua.uiua_eval('{1 "Hello" 3.14 [2 3 4]}')
-print(f"boxed array: {boxed_array}")
+# Add values to the stack from python
+uiua.push(1)
+uiua.push([1, 2, 3])
+uiua.push(["mixed types", 42, 3.14])
 
-# Get the entire stack as a list
-stack = uiua.uiua_stack("1 2 3")
-print(stack)  # Output: [3, 2, 1] (bottom to top)
+# Retrieve and print the current stack
+print(f"{uiua.stack()=}")
 
+# Pop from the stack
+print(f"{uiua.pop()=}")
+
+# Run a command against the python added values on the stack
+print(f"Running + to sum top two values on the stack ({uiua.stack()})")
+uiua.run('+')
+print(f"{uiua.pop()=}")
+
+# Uses the uiua display representation
+uiua.push("Hello")
+uiua.run("°△3_3")
+print(f"{uiua=}")

@@ -1,10 +1,8 @@
-"""Tests for error handling."""
-
 import pytest
-import pyuiua as uiua
 
 
-def test_invalid_code_raises_error() -> None:
-    """Test that invalid code raises RuntimeError."""
-    with pytest.raises(RuntimeError):
-        uiua.uiua_eval("invalid syntax")
+def test_invalid_code_raises_error(uiua) -> None:
+    with pytest.raises(RuntimeError) as e:
+        uiua.run("invalid uiua syntax")
+
+    assert "Uiua error" in str(e.value)
