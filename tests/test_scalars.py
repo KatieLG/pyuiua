@@ -1,5 +1,3 @@
-"""Tests for scalar value conversions."""
-
 from typing import TypeAlias
 
 import pytest
@@ -21,6 +19,7 @@ Scalar: TypeAlias = int | float | str
         ('""', str, ""),
         ('"Hello"', str, "Hello"),
         ('"Hello World"', str, "Hello World"),
+        ('"Line1\\nLine2"', str, "Line1\nLine2"),
     ],
 )
 def test_scalar_conversions(

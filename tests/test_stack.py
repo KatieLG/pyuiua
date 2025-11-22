@@ -1,5 +1,3 @@
-"""Tests for stack operations."""
-
 import pytest
 import pyuiua as uiua
 
@@ -22,17 +20,20 @@ def test_uiua_stack(code: str, expected: list) -> None:
 
 
 def test_uiua_stack_empty() -> None:
-    """Test uiua_stack with empty stack returns empty list."""
+    """Test an empty stack returns an empty list."""
     result = uiua.uiua_stack("")
     assert isinstance(result, list)
     assert result == []
 
 
-def test_uiua_stack_vs_eval() -> None:
-    """Test that uiua_stack returns all values while uiua_eval returns top."""
-    code = "1 2 3 4 5"
+@pytest.mark.parametrize(
+    "code,expected_stack",
+    [("1 2 3 4 5", [5, 4, 3, 2, 1]), ("1_1 2_2", [[2, 2], [1, 1]])],
+)
+def test_uiua_stack_vs_eval(code: str, expected_stack: list) -> None:
+    """Test the final element of the bottom to top stack is what eval returns."""
     stack_result = uiua.uiua_stack(code)
     eval_result = uiua.uiua_eval(code)
 
-    assert stack_result == [5, 4, 3, 2, 1]
-    assert eval_result == 1
+    assert stack_result == expected_stack
+    assert eval_result == expected_stack.pop()

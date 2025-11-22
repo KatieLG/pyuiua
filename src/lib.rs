@@ -1,7 +1,4 @@
-//! Python bindings for Uiua - a stack-based array programming language
-//!
-//! This library provides Python bindings to execute Uiua code and convert
-//! results to Python types.
+//! Python bindings for Uiua
 
 use pyo3::prelude::*;
 
