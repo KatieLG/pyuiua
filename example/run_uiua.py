@@ -11,3 +11,8 @@ print(f"10 factorial fixed: {ten_fact_array}")
 # Boxed array of mixed types
 boxed_array = uiua.uiua_eval('{1 "Hello" 3.14 [2 3 4]}')
 print(f"boxed array: {boxed_array}")
+
+# Get the entire stack as a list
+stack = uiua.uiua_stack("1 2 3")
+print(stack)  # Output: [3, 2, 1] (bottom to top)
+
