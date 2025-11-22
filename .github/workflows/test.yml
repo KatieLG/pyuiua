@@ -19,14 +19,5 @@ jobs:
       - name: Set up Python
         run: uv python install
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Create a virtual environment and install dependencies
-        run: uv sync
-
-      - name: Install the package
-        run: uv run maturin develop
-
       - name: Run tests
         run: uv run pytest
