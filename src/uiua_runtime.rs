@@ -5,7 +5,7 @@ use pyo3::types::PyList;
 use pyo3::{create_exception, prelude::*};
 use uiua::Uiua;
 
-use crate::convert::{pyobject_to_value, value_to_pyobject};
+use crate::convert::{pyobject_to_uiua_value, uiua_value_to_pyobject};
 
 #[pyclass(name = "Uiua")]
 pub struct PyUiua {
@@ -31,7 +31,7 @@ impl PyUiua {
 
     /// Push a Python value onto the stack
     fn push<'py>(&mut self, py: Python<'py>, value: &Bound<'py, PyAny>) -> PyResult<()> {
-        let uiua_value = pyobject_to_value(py, value, &self.uiua)?;
+        let uiua_value = pyobject_to_uiua_value(py, value, &self.uiua)?;
         self.uiua.push(uiua_value);
         Ok(())
     }
@@ -39,7 +39,7 @@ impl PyUiua {
     /// Pop a value from the stack and convert to Python
     fn pop<'py>(&mut self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         let value = self.uiua.pop(1).map_err(to_uiua_error)?;
-        value_to_pyobject(py, value, &self.uiua)
+        uiua_value_to_pyobject(py, &value, &self.uiua)
     }
 
     /// Get all values from the stack without removing them
@@ -49,7 +49,7 @@ impl PyUiua {
             .stack()
             .iter()
             .rev()
-            .map(|v| value_to_pyobject(py, v.clone(), &self.uiua))
+            .map(|v| uiua_value_to_pyobject(py, v, &self.uiua))
             .collect();
 
         PyList::new(py, py_values?)
@@ -81,7 +81,7 @@ impl PyUiua {
             .stack()
             .iter()
             .map(|v| {
-                let py_val = value_to_pyobject(py, v.clone(), &self.uiua)?;
+                let py_val = uiua_value_to_pyobject(py, v, &self.uiua)?;
                 Ok(py_val.repr()?.to_string())
             })
             .collect();

@@ -9,15 +9,15 @@ build:
 lint:
 	uv run ruff check
 	cargo check
-	cargo clippy
-
+	cargo clippy -- -D clippy::pedantic
 
 test:
 	uv run pytest
 
 format:
-    uv run ruff check --fix
-    uv run ruff format
+	uv run ruff check --fix
+	uv run ruff format
+	cargo clippy --fix -- -D clippy::pedantic
 	cargo format
 
 check: format lint test

@@ -39,3 +39,19 @@ def test_multidimensional_array_conversions(uiua: Uiua, code: str, expected: lis
     result = uiua.pop()
     assert isinstance(result, list)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    "stack_value",
+    [
+        "hello world",
+        ["hello world"],
+        ["h", "e", "ll", "o", "world"],
+        [["h", "e"], "llo", ["world"]],
+    ],
+)
+def test_character_array_conversions(uiua: Uiua, stack_value: str | list) -> None:
+    """Test that converting string values between python & uiua gets dimension correct"""
+    uiua.push(stack_value)
+    result = uiua.pop()
+    assert result == stack_value
