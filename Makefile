@@ -9,9 +9,8 @@ build:
 test:
 	uv run pytest
 
-ci:
-	maturin generate-ci github --platform windows --platform macos --platform linux -o .github/workflows/CI.yml
+format:
+    uv run ruff check --fix
+    uv run ruff format
 
-clean:
-	cargo clean
-	rm -rf target/ dist/ .pytest_cache/
+check: format test

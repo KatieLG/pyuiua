@@ -1,7 +1,9 @@
 import pytest
 
+from pyuiua import Uiua
 
-def test_push_pop_scalars(uiua):
+
+def test_push_pop_scalars(uiua: Uiua) -> None:
     uiua.push(42)
     assert len(uiua) == 1
 
@@ -10,7 +12,7 @@ def test_push_pop_scalars(uiua):
     assert len(uiua) == 0
 
 
-def test_push_pop_multiple_types(uiua):
+def test_push_pop_multiple_types(uiua: Uiua) -> None:
     uiua.push(1)
     uiua.push(2.5)
     uiua.push("hello")
@@ -24,7 +26,7 @@ def test_push_pop_multiple_types(uiua):
     assert uiua.pop() == 1
 
 
-def test_stack_order(uiua):
+def test_stack_order(uiua: Uiua) -> None:
     uiua.push(1)
     uiua.push(2)
     uiua.push(3)
@@ -32,7 +34,7 @@ def test_stack_order(uiua):
     assert uiua.stack() == [3, 2, 1]
 
 
-def test_operations(uiua):
+def test_operations(uiua: Uiua) -> None:
     uiua.push(10)
     uiua.push(20)
     uiua.run("+")
@@ -40,7 +42,7 @@ def test_operations(uiua):
     assert uiua.stack() == [30]
 
 
-def test_run_multiple_operations(uiua):
+def test_run_multiple_operations(uiua: Uiua) -> None:
     uiua.push([])
     uiua.push(5)
     uiua.push(3)
@@ -50,7 +52,7 @@ def test_run_multiple_operations(uiua):
     assert uiua.stack() == [16, []]
 
 
-def test_clear_stack(uiua):
+def test_clear_stack(uiua: Uiua) -> None:
     uiua.push(1)
     uiua.push(2)
     uiua.push(3)
@@ -68,14 +70,14 @@ def test_clear_stack(uiua):
     ],
 )
 def test_python_to_uiua_conversion(
-    uiua, python_value: object, uiua_code: str, expected_value: object
+    uiua: Uiua, python_value: object, uiua_code: str, expected_value: object
 ) -> None:
     uiua.push(python_value)
     uiua.run(uiua_code)
     assert uiua.pop() == expected_value
 
 
-def test_mixed_types_boxed(uiua):
+def test_mixed_types_boxed(uiua: Uiua) -> None:
     uiua.push([1, "hello", 3.14])
 
     result = uiua.pop()
@@ -86,19 +88,19 @@ def test_mixed_types_boxed(uiua):
     assert result[2] == 3.14
 
 
-def test_pop_empty_stack_error(uiua):
+def test_pop_empty_stack_error(uiua: Uiua) -> None:
     with pytest.raises(RuntimeError, match="No values on stack"):
         uiua.pop()
 
 
-def test_invalid_uiua_code(uiua):
+def test_invalid_uiua_code(uiua: Uiua) -> None:
     uiua.push(1)
 
     with pytest.raises(RuntimeError, match="Uiua error"):
         uiua.run("some invalid code")
 
 
-def test_chained_operations(uiua):
+def test_chained_operations(uiua: Uiua) -> None:
     uiua.push([1, 2, 3, 4, 5])
     uiua.run(".")
     uiua.run("/+")

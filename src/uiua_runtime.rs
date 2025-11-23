@@ -6,7 +6,6 @@ use uiua::Uiua;
 
 use crate::convert::{pyobject_to_value, value_to_pyobject};
 
-/// A Uiua instance with a stack
 #[pyclass(name = "Uiua")]
 pub struct PyUiua {
     uiua: Uiua,
@@ -14,7 +13,7 @@ pub struct PyUiua {
 
 #[pymethods]
 impl PyUiua {
-    /// Create a new Uiua runtime instance
+    /// Create a new Uiua instance
     #[new]
     fn new() -> Self {
         PyUiua {
@@ -71,7 +70,7 @@ impl PyUiua {
         self.uiua.take_stack();
     }
 
-    /// Get the number of values on the stack
+    /// Return number of values on the stack
     fn __len__(&self) -> usize {
         self.uiua.stack().len()
     }

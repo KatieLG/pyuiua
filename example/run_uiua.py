@@ -24,7 +24,6 @@ print(f"Running + to sum top two values on the stack ({uiua.stack()})")
 uiua.run("+")
 print(f"{uiua.pop()=}")
 
-# pretty uses the uiua display representation
-print(code:="°△3_3")
-uiua.run(code)
-print(uiua.pretty())
+# Clear the stack
+uiua.clear()
+print(f"Stack cleared: {uiua.stack()=}")

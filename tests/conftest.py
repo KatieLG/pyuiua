@@ -1,7 +1,8 @@
 import pytest
-import pyuiua
+
+from pyuiua import Uiua
 
 
 @pytest.fixture
-def uiua():
-    return pyuiua.Uiua()
+def uiua() -> Uiua:
+    return Uiua()

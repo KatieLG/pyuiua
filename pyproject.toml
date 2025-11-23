@@ -1,30 +1,36 @@
-[build-system]
-requires = ["maturin>=1.9,<2.0"]
-build-backend = "maturin"
-
 [project]
 name = "python-uiua"
+version = "0.0.1"
+description = "Python bindings for the Uiua programming language."
+license = { file = "LISCENCE" }
+authors = [{ name = "Katie Gardner" }]
+readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
     "Programming Language :: Rust",
+    "Programming Language :: Python",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
-]
-dynamic = ["version"]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
-    "maturin>=1.9",
+    "Typing :: Typed",
 ]
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
+include = ["pyuiua.pyi", "py.typed"]
+
+[build-system]
+requires = ["maturin>=1.9,<2.0"]
+build-backend = "maturin"
 
 [dependency-groups]
 dev = [
     "pytest>=7.0",
-    "pytest-cov>=4.0",
     "maturin>=1.9",
+    "ruff>=0.14.6",
 ]
+
+[tool.ruff]
+line-length = 100
+lint.select = ["B", "C4", "PLC", "F", "ANN", "I", "TID", "RET", "SIM"]

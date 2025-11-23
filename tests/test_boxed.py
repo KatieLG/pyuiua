@@ -1,5 +1,7 @@
 import pytest
 
+from pyuiua import Uiua
+
 
 @pytest.mark.parametrize(
     "code,expected",
@@ -11,14 +13,14 @@ import pytest
         ("¤[1 2 3]", [[1, 2, 3]]),
     ],
 )
-def test_single_boxed_value_conversions(uiua, code: str, expected: list) -> None:
+def test_single_boxed_value_conversions(uiua: Uiua, code: str, expected: list) -> None:
     uiua.run(code)
     result = uiua.pop()
     assert isinstance(result, list)
     assert result == expected
 
 
-def test_boxed_array_mixed_types(uiua) -> None:
+def test_boxed_array_mixed_types(uiua: Uiua) -> None:
     uiua.run('{1 "Hello" 3.14 [2 3 4]}')
     result = uiua.pop()
     assert isinstance(result, list)
@@ -30,7 +32,7 @@ def test_boxed_array_mixed_types(uiua) -> None:
     assert all(isinstance(x, int) for x in result[3])
 
 
-def test_mixed_nested_arrays(uiua) -> None:
+def test_mixed_nested_arrays(uiua: Uiua) -> None:
     uiua.run("{[1 2] [[3 4][5 6]] 7}")
     result = uiua.pop()
     assert isinstance(result, list)
@@ -38,7 +40,7 @@ def test_mixed_nested_arrays(uiua) -> None:
     assert result == [[1, 2], [[3, 4], [5, 6]], 7]
 
 
-def test_mixed_array_element_types(uiua) -> None:
+def test_mixed_array_element_types(uiua: Uiua) -> None:
     uiua.run('{[1 2 3] [1.1 2.2 3.3] ["a" "b" "c"]}')
     result = uiua.pop()
     assert isinstance(result, list)

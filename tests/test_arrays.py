@@ -1,5 +1,7 @@
 import pytest
 
+from pyuiua import Uiua
+
 
 @pytest.mark.parametrize(
     "code,expected_item_type,expected",
@@ -11,7 +13,7 @@ import pytest
     ],
 )
 def test_flat_array_conversions(
-    uiua, code: str, expected_item_type: type | None, expected: list
+    uiua: Uiua, code: str, expected_item_type: type | None, expected: list
 ) -> None:
     uiua.run(code)
     result = uiua.pop()
@@ -32,7 +34,7 @@ def test_flat_array_conversions(
         ("↯2_2 [1.1 2.2 3.3 4.4]", [[1.1, 2.2], [3.3, 4.4]]),
     ],
 )
-def test_multidimensional_array_conversions(uiua, code: str, expected: list) -> None:
+def test_multidimensional_array_conversions(uiua: Uiua, code: str, expected: list) -> None:
     uiua.run(code)
     result = uiua.pop()
     assert isinstance(result, list)

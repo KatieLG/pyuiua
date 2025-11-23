@@ -2,6 +2,8 @@ from typing import TypeAlias
 
 import pytest
 
+from pyuiua import Uiua
+
 Scalar: TypeAlias = int | float | str
 
 
@@ -22,7 +24,7 @@ Scalar: TypeAlias = int | float | str
     ],
 )
 def test_scalar_conversions(
-    uiua, code: str, expected_type: type, expected_value: Scalar
+    uiua: Uiua, code: str, expected_type: type, expected_value: Scalar
 ) -> None:
     uiua.run(code)
     result = uiua.pop()
