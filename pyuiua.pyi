@@ -29,6 +29,21 @@ Can be:
 Mixed int/float lists are converted to a float array in Uiua.
 """
 
+class UiuaError(RuntimeError):
+    """Exception raised when Uiua operations fail, such as:
+
+    - Syntax errors in Uiua code passed to `run()`
+    - Runtime errors during Uiua code execution
+    - Calling `pop()` on an empty stack
+
+    Example:
+        >>> u = Uiua()
+        >>> u.run("+ 1")  # Missing second argument
+        UiuaError: ...
+        >>> u.pop()  # Empty stack
+        UiuaError: ...
+    """
+
 class Uiua:
     """A Uiua instance with a persistent stack.
 
@@ -63,7 +78,7 @@ class Uiua:
             value: A Python value to push.
 
         Raises:
-            RuntimeError: If the value cannot be converted to a Uiua type.
+            TypeError: If the value cannot be converted to a Uiua type.
 
         Example:
             >>> u = Uiua()
@@ -83,7 +98,7 @@ class Uiua:
             The top value from the stack as a Python value.
 
         Raises:
-            RuntimeError: If the stack is empty.
+            UiuaError: If the stack is empty.
 
         Example:
             >>> u = Uiua()
@@ -91,7 +106,7 @@ class Uiua:
             >>> u.pop()
             42
             >>> u.pop()  # Stack is empty
-            RuntimeError: Failed to pop from stack: No values on stack
+            UiuaError: Failed to pop from stack: No values on stack
         """
         ...
 
@@ -112,6 +127,7 @@ class Uiua:
             [1, 2, 3]
         """
         ...
+
     def run(self, code: str) -> None:
         """Execute Uiua code
 
@@ -121,7 +137,7 @@ class Uiua:
             code: A string containing Uiua code to execute.
 
         Raises:
-            RuntimeError: If the code contains syntax errors or runtime errors.
+            UiuaError: If the code contains syntax errors or runtime errors.
 
         Example:
             >>> u = Uiua()
@@ -178,4 +194,4 @@ class Uiua:
         """
         ...
 
-__all__ = ["Uiua", "UiuaValue"]
+__all__ = ["Uiua", "UiuaError", "UiuaValue"]

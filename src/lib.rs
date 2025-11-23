@@ -10,5 +10,6 @@ use uiua_runtime::PyUiua;
 #[pymodule]
 fn pyuiua(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyUiua>()?;
+    m.add("UiuaError", m.py().get_type::<uiua_runtime::UiuaError>())?;
     Ok(())
 }

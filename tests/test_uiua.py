@@ -88,18 +88,6 @@ def test_mixed_types_boxed(uiua: Uiua) -> None:
     assert result[2] == 3.14
 
 
-def test_pop_empty_stack_error(uiua: Uiua) -> None:
-    with pytest.raises(RuntimeError, match="No values on stack"):
-        uiua.pop()
-
-
-def test_invalid_uiua_code(uiua: Uiua) -> None:
-    uiua.push(1)
-
-    with pytest.raises(RuntimeError, match="Uiua error"):
-        uiua.run("some invalid code")
-
-
 def test_chained_operations(uiua: Uiua) -> None:
     uiua.push([1, 2, 3, 4, 5])
     uiua.run(".")

@@ -1,7 +1,8 @@
 //! Uiua runtime wrapper for Python
 
-use pyo3::prelude::*;
+use pyo3::exceptions::PyRuntimeError;
 use pyo3::types::PyList;
+use pyo3::{create_exception, prelude::*};
 use uiua::Uiua;
 
 use crate::convert::{pyobject_to_value, value_to_pyobject};
@@ -9,6 +10,13 @@ use crate::convert::{pyobject_to_value, value_to_pyobject};
 #[pyclass(name = "Uiua")]
 pub struct PyUiua {
     uiua: Uiua,
+}
+
+create_exception!(pyuiua, UiuaError, PyRuntimeError);
+
+// Convert any errors to a python UiuaError
+fn to_uiua_error(e: impl std::fmt::Display) -> PyErr {
+    UiuaError::new_err(e.to_string())
 }
 
 #[pymethods]
@@ -30,39 +38,26 @@ impl PyUiua {
 
     /// Pop a value from the stack and convert to Python
     fn pop<'py>(&mut self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-        let value = self.uiua.pop("No values on stack").map_err(|e| {
-            PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!(
-                "Failed to pop from stack: {}",
-                e
-            ))
-        })?;
-
-        // Create a temporary uiua instance for conversion
-        let temp_uiua = Uiua::with_native_sys();
-        value_to_pyobject(py, value, &temp_uiua)
+        let value = self.uiua.pop(1).map_err(to_uiua_error)?;
+        value_to_pyobject(py, value, &self.uiua)
     }
 
     /// Get all values from the stack without removing them
-    fn stack<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
-        let stack = self.uiua.stack();
-        let list = PyList::empty(py);
+    fn stack<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+        let py_values: PyResult<Vec<_>> = self
+            .uiua
+            .stack()
+            .iter()
+            .rev()
+            .map(|v| value_to_pyobject(py, v.clone(), &self.uiua))
+            .collect();
 
-        let temp_uiua = Uiua::with_native_sys();
-        // Reverse the iteration so top of stack is at the end of list
-        let values: Vec<_> = stack.iter().cloned().collect();
-        for value in values.iter().rev() {
-            let py_val = value_to_pyobject(py, (*value).clone(), &temp_uiua)?;
-            list.append(py_val)?;
-        }
-
-        Ok(list.into_any())
+        PyList::new(py, py_values?)
     }
 
     /// Run Uiua code on the current stack
     fn run(&mut self, code: &str) -> PyResult<()> {
-        self.uiua.run_str(code).map(|_| ()).map_err(|e| {
-            PyErr::new::<pyo3::exceptions::PyRuntimeError, _>(format!("Uiua error: {}", e))
-        })
+        self.uiua.run_str(code).map(|_| ()).map_err(to_uiua_error)
     }
 
     /// Clear the stack
@@ -70,21 +65,27 @@ impl PyUiua {
         self.uiua.take_stack();
     }
 
-    /// Return number of values on the stack
+    /// Return number of values on stack
     fn __len__(&self) -> usize {
         self.uiua.stack().len()
     }
 
     /// String representation
-    fn __repr__(&self) -> String {
-        let stack = self.uiua.stack();
-        if stack.is_empty() {
-            return "Uiua(stack=[])".to_string();
+    fn __repr__(&self, py: Python<'_>) -> PyResult<String> {
+        if self.uiua.stack().is_empty() {
+            return Ok("Uiua(stack=[])".to_string());
         }
 
-        // Format stack values using Uiua's Display implementation
-        let stack_repr: Vec<String> = stack.iter().map(|v| format!("{}", v)).collect();
+        let stack_reprs: PyResult<Vec<_>> = self
+            .uiua
+            .stack()
+            .iter()
+            .map(|v| {
+                let py_val = value_to_pyobject(py, v.clone(), &self.uiua)?;
+                Ok(py_val.repr()?.to_string())
+            })
+            .collect();
 
-        format!("Uiua(stack=[{}])", stack_repr.join(", "))
+        Ok(format!("Uiua(stack=[{}])", stack_reprs?.join(", ")))
     }
 }
