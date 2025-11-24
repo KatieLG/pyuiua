@@ -1,4 +1,4 @@
-.PHONY: dev build test ci clean
+.PHONY: dev build lint test format check test-release release
 
 dev:
 	maturin develop
@@ -19,6 +19,12 @@ format:
 	uv run ruff check --fix
 	uv run ruff format
 	cargo clippy --fix -- -D clippy::pedantic
-	cargo format
+	cargo fmt
 
 check: format lint test
+
+test-release:
+	maturin publish --repository testpypi
+
+release:
+	maturin publish

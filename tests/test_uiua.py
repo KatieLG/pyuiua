@@ -1,6 +1,6 @@
 import pytest
 
-from pyuiua import Uiua
+from pyuiua import Uiua, UiuaValue
 
 
 def test_scalar_operations(uiua: Uiua) -> None:
@@ -22,7 +22,7 @@ def test_scalar_operations(uiua: Uiua) -> None:
     ],
 )
 def test_array_operations(
-    uiua: Uiua, python_value, uiua_code: str, expected_value
+    uiua: Uiua, python_value: UiuaValue, uiua_code: str, expected_value: UiuaValue
 ) -> None:
     uiua.push(python_value)
     uiua.run(uiua_code)

@@ -1,3 +1,5 @@
+//! Type conversions between Python and Uiua
+
 mod to_python;
 mod to_uiua;
 

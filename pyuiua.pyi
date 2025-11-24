@@ -1,6 +1,6 @@
 """Python bindings for the Uiua programming language.
 
-Supoprts executing Uiua code from python and manipulating the stack in either language.
+Supports executing Uiua code from python and manipulating the stack in either language.
 Values are automatically converted between Python and Uiua types.
 
 Example:

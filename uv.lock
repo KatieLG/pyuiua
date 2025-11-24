@@ -102,8 +102,8 @@ wheels = [
 ]
 
 [[package]]
-name = "python-uiua"
-version = "0.0.1"
+name = "pyuiua"
+version = "0.0.2"
 source = { editable = "." }
 
 [package.dev-dependencies]
