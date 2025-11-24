@@ -5,7 +5,7 @@ description = "Python bindings for the Uiua programming language."
 license = { file = "LISCENCE" }
 authors = [{ name = "Katie Gardner" }]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -29,6 +29,7 @@ dev = [
     "pytest>=7.0",
     "maturin>=1.9",
     "ruff>=0.14.6",
+    "ty>=0.0.1a27",
 ]
 
 [tool.ruff]

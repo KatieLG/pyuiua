@@ -1,5 +1,5 @@
 [package]
-name = "python-uiua"
+name = "pyuiua"
 version = "0.0.1"
 edition = "2024"
 

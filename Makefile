@@ -8,6 +8,7 @@ build:
 
 lint:
 	uv run ruff check
+	uv run ty check
 	cargo check
 	cargo clippy -- -D clippy::pedantic
 

@@ -17,4 +17,4 @@ def test_invalid_uiua_code(uiua: Uiua, code: str) -> None:
 @pytest.mark.parametrize("unsupported_type", [{"key": "value"}, object(), {1, 2, 3}])
 def test_invalid_python_type(uiua: Uiua, unsupported_type: dict | object | set) -> None:
     with pytest.raises(TypeError):
-        uiua.push(unsupported_type)
+        uiua.push(unsupported_type)  # type: ignore

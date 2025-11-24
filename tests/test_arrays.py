@@ -9,11 +9,11 @@ from pyuiua import Uiua
         ("[1 2 3]", int, [1, 2, 3]),
         ("⇡5", int, [0, 1, 2, 3, 4]),
         ("[1.5 2.5 3.5]", float, [1.5, 2.5, 3.5]),
-        ("[]", None, []),
+        ("[]", object, []),
     ],
 )
 def test_flat_array_conversions(
-    uiua: Uiua, code: str, expected_item_type: type | None, expected: list
+    uiua: Uiua, code: str, expected_item_type: type, expected: list
 ) -> None:
     uiua.run(code)
     result = uiua.pop()
