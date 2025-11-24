@@ -1,6 +1,6 @@
 import pytest
 
-from pyuiua import Uiua
+from pyuiua import Uiua, UiuaValue
 
 
 @pytest.mark.parametrize(
@@ -21,20 +21,40 @@ def test_uiua_stack(uiua: Uiua, code: str, expected: list) -> None:
     assert result == expected
 
 
-def test_uiua_stack_empty(uiua: Uiua) -> None:
-    """Test that an empty stack gives an empty list"""
-    uiua.run("")
-    result = uiua.stack()
-    assert isinstance(result, list)
-    assert result == []
+def test_push_stack_order(uiua: Uiua) -> None:
+    uiua.push(0)
+    uiua.push(1)
+    uiua.push(2)
+
+    assert uiua.stack() == [2, 1, 0]
 
 
 @pytest.mark.parametrize(
     "code,expected_stack",
     [("1 2 3 4 5", [1, 2, 3, 4, 5]), ("1_1 2_2", [[1, 1], [2, 2]])],
 )
-def test_uiua_stack_vs_pop(uiua: Uiua, code: str, expected_stack: list) -> None:
+def test_stack_pop(uiua: Uiua, code: str, expected_stack: list) -> None:
     """Test popping from the uiua stack gives the top item on the stack"""
     uiua.run(code)
     assert uiua.stack() == expected_stack
     assert uiua.pop() == expected_stack[0]
+
+
+@pytest.mark.parametrize(
+    "value,expected_stack",
+    [(42, [42]), ([1, 2, 3], [[1, 2, 3]]), ("hello", ["hello"])],
+)
+def test_push(uiua: Uiua, value: UiuaValue, expected_stack: list) -> None:
+    """Test pushing values onto the uiua stack"""
+    uiua.push(value)
+    assert uiua.stack() == expected_stack
+
+
+def test_clear_stack(uiua: Uiua) -> None:
+    uiua.push(1)
+    uiua.push(2)
+    uiua.push(3)
+
+    uiua.clear()
+    assert len(uiua) == 0
+    assert uiua.stack() == []

@@ -2,31 +2,26 @@ from typing import TypeAlias
 
 import pytest
 
-from pyuiua import Uiua
+from pyuiua import Uiua, UiuaValue
 
 Scalar: TypeAlias = int | float | str
 
 
 @pytest.mark.parametrize(
-    "code,expected_type,expected_value",
+    "value,expected_type",
     [
-        ("42", int, 42),
-        ("0", int, 0),
-        ("1000000", int, 1000000),
-        ("¯5", int, -5),
-        ("3.14", float, 3.14),
-        ("1.5", float, 1.5),
-        ('"Hello, World!"', str, "Hello, World!"),
-        ('""', str, ""),
-        ('"Hello"', str, "Hello"),
-        ('"Hello World"', str, "Hello World"),
-        ('"Line1\\nLine2"', str, "Line1\nLine2"),
+        (42, int),
+        (0, int),
+        (1000000, int),
+        (-5, int),
+        (3.14, float),
+        ("Hello, World!", str),
+        ("", str),
+        ("Line1\nLine2", str),
     ],
 )
-def test_scalar_conversions(
-    uiua: Uiua, code: str, expected_type: type, expected_value: Scalar
-) -> None:
-    uiua.run(code)
+def test_scalar_conversions(uiua: Uiua, value: UiuaValue, expected_type: type) -> None:
+    uiua.push(value)
     result = uiua.pop()
     assert isinstance(result, expected_type)
-    assert result == expected_value
+    assert result == value
