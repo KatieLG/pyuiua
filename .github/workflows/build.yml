@@ -28,10 +28,10 @@ jobs:
           - runner: windows-latest
             target: x86
             os: windows
-          - runner: macos-13
+          - runner: macos-14
             target: x86_64
             os: macos
-          - runner: macos-14
+          - runner: macos-15
             target: aarch64
             os: macos
     steps:
