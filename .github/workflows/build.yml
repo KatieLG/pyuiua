@@ -19,9 +19,6 @@ jobs:
           - runner: ubuntu-22.04
             target: x86_64
             os: linux
-          - runner: ubuntu-22.04
-            target: aarch64
-            os: linux
           - runner: windows-latest
             target: x64
             os: windows
