@@ -62,7 +62,6 @@ fn uiua_scalar_to_pyobject<'py>(
     try_convert!(value.as_int(uiua, ""));
     try_convert!(value.as_num(uiua, ""));
     try_convert!(value.as_string(uiua, ""));
-    try_convert!(value.as_bytes(uiua, "").map(std::borrow::Cow::into_owned));
 
     // If all conversions fail, raise a Type Error
     Err(PyErr::new::<pyo3::exceptions::PyTypeError, _>(format!(

@@ -1,14 +1,12 @@
 [project]
 name = "pyuiua"
-version = "0.0.2"
+version = "0.0.3"
 description = "Python bindings for the Uiua programming language."
 license = { file = "LICENSE" }
 authors = [{ name = "Katie Gardner" }]
 readme = "README.md"
 requires-python = ">=3.10"
 keywords = ["uiua", "array-programming", "python-bindings", "interpreter"]
-homepage = "https://github.com/KatieLG/pyuiua"
-repository = "https://github.com/KatieLG/pyuiua"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -26,6 +24,10 @@ classifiers = [
     "Topic :: Software Development :: Interpreters",
     "Typing :: Typed",
 ]
+
+[project.urls]
+Homepage = "https://github.com/KatieLG/pyuiua"
+Repository = "https://github.com/KatieLG/pyuiua"
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
