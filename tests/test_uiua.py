@@ -10,7 +10,7 @@ def test_scalar_operations(uiua: Uiua) -> None:
     uiua.run("+")
     uiua.run("×2")
 
-    assert uiua.stack() == [16, []]
+    assert uiua.stack() == [[], 16]
 
 
 @pytest.mark.parametrize(

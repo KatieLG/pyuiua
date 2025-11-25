@@ -43,7 +43,7 @@ print(uiua.pop())  # 15
 uiua.push(1)
 uiua.push(2)
 uiua.push(3)
-print(uiua.stack())  # [3, 2, 1]
+print(uiua.stack())  # [1, 2, 3]
 print(len(uiua))     # 3
 
 # Clear the stack

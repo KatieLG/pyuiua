@@ -48,7 +48,6 @@ impl PyUiua {
             .uiua
             .stack()
             .iter()
-            .rev()
             .map(|v| uiua_value_to_pyobject(py, v, &self.uiua))
             .collect();
 
