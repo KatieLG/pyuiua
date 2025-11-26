@@ -39,7 +39,7 @@ impl PyUiua {
     /// Pop a value from the stack and convert to Python
     fn pop<'py>(&mut self, py: Python<'py>) -> PyResult<Bound<'py, PyAny>> {
         let value = self.uiua.pop(1).map_err(to_uiua_error)?;
-        uiua_value_to_pyobject(py, &value, &self.uiua)
+        uiua_value_to_pyobject(py, &value)
     }
 
     /// Get all values from the stack without removing them
@@ -48,7 +48,7 @@ impl PyUiua {
             .uiua
             .stack()
             .iter()
-            .map(|v| uiua_value_to_pyobject(py, v, &self.uiua))
+            .map(|v| uiua_value_to_pyobject(py, v))
             .collect();
 
         PyList::new(py, py_values?)
@@ -80,7 +80,7 @@ impl PyUiua {
             .stack()
             .iter()
             .map(|v| {
-                let py_val = uiua_value_to_pyobject(py, v, &self.uiua)?;
+                let py_val = uiua_value_to_pyobject(py, v)?;
                 Ok(py_val.repr()?.to_string())
             })
             .collect();

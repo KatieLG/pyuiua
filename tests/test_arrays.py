@@ -1,6 +1,6 @@
 import pytest
 
-from pyuiua import Uiua
+from pyuiua import Uiua, UiuaValue
 
 
 @pytest.mark.parametrize(
@@ -12,13 +12,30 @@ from pyuiua import Uiua
         ("[]", object, []),
     ],
 )
-def test_flat_array_conversions(
-    uiua: Uiua, code: str, expected_item_type: type, expected: list
+def test_flat_array_to_python(
+    uiua: Uiua, code: str, expected_item_type: type, expected: list[UiuaValue]
 ) -> None:
     uiua.run(code)
     result = uiua.pop()
     assert isinstance(result, list)
     assert result == expected
+    assert all(isinstance(x, expected_item_type) for x in result)
+
+
+@pytest.mark.parametrize(
+    "value,expected_item_type",
+    [
+        ([1, 2, 3], int),
+        ([10, 20, 30, 40, 50], int),
+        ([1.5, 2.5, 3.5], float),
+        ([2234], float),
+    ],
+)
+def test_flat_array_to_uiua(uiua: Uiua, value: list[UiuaValue], expected_item_type: type) -> None:
+    uiua.push(value)
+    result = uiua.pop()
+    assert isinstance(result, list)
+    assert result == value
     assert all(isinstance(x, expected_item_type) for x in result)
 
 
@@ -34,7 +51,9 @@ def test_flat_array_conversions(
         ("↯2_2 [1.1 2.2 3.3 4.4]", [[1.1, 2.2], [3.3, 4.4]]),
     ],
 )
-def test_multidimensional_array_conversions(uiua: Uiua, code: str, expected: list) -> None:
+def test_multidimensional_array_conversions(
+    uiua: Uiua, code: str, expected: list[UiuaValue]
+) -> None:
     uiua.run(code)
     result = uiua.pop()
     assert isinstance(result, list)
@@ -50,7 +69,7 @@ def test_multidimensional_array_conversions(uiua: Uiua, code: str, expected: lis
         [["h", "e"], "llo", ["world"]],
     ],
 )
-def test_character_array_conversions(uiua: Uiua, stack_value: str | list) -> None:
+def test_character_array_conversions(uiua: Uiua, stack_value: str | list[UiuaValue]) -> None:
     """Test that converting string values between python & uiua gets dimension correct"""
     uiua.push(stack_value)
     result = uiua.pop()

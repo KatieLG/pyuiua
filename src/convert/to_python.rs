@@ -1,75 +1,55 @@
 //! Uiua to Python conversions
 
 use pyo3::prelude::*;
-use pyo3::types::PyList;
-use uiua::{Uiua, Value};
+use pyo3::types::{PyComplex, PyList};
+use uiua::Value;
 
 /// Convert Uiua value to Python object
-pub fn uiua_value_to_pyobject<'py>(
-    py: Python<'py>,
-    value: &Value,
-    uiua: &Uiua,
-) -> PyResult<Bound<'py, PyAny>> {
-    if value.shape.is_empty() {
-        return uiua_scalar_to_pyobject(py, value, uiua);
-    }
+pub fn uiua_value_to_pyobject<'py>(py: Python<'py>, value: &Value) -> PyResult<Bound<'py, PyAny>> {
+    let is_scalar = value.shape.is_empty();
 
-    if let Ok(s) = value.as_string(uiua, "") {
-        return Ok(s.into_pyobject(py)?.into_any());
-    }
-
-    uiua_array_to_pylist(py, value, uiua).map(pyo3::Bound::into_any)
-}
-
-/// Convert a Uiua array to a Python list
-fn uiua_array_to_pylist<'py>(
-    py: Python<'py>,
-    value: &Value,
-    uiua: &Uiua,
-) -> PyResult<Bound<'py, PyList>> {
-    let is_boxed = value.as_box_array().is_some();
-    let len = value.shape[0];
-    let list = PyList::empty(py);
-
-    for i in 0..len {
-        let mut v = value.row(i);
-        // If this is a boxed array, unbox the elements
-        while is_boxed && v.as_box().is_some() {
-            v = v.unboxed();
-        }
-        let py_val = uiua_value_to_pyobject(py, &v, uiua)?;
-        list.append(py_val)?;
-    }
-
-    Ok(list)
-}
-
-/// Convert Uiua scalar to a Python scalar
-fn uiua_scalar_to_pyobject<'py>(
-    py: Python<'py>,
-    value: &Value,
-    uiua: &Uiua,
-) -> PyResult<Bound<'py, PyAny>> {
-    // Helper to convert to PyAny
-    macro_rules! try_convert {
-        ($expr:expr) => {
-            if let Ok(val) = $expr {
-                return Ok(val.into_pyobject(py)?.into_any());
+    macro_rules! convert {
+        ($arr:expr) => {
+            if is_scalar {
+                Ok($arr.elements().next().unwrap().into_pyobject(py)?.into_any())
+            } else {
+                array_to_pylist(py, value)
+            }
+        };
+        ($arr:expr, $scalar:expr) => {
+            if is_scalar {
+                $scalar
+            } else {
+                array_to_pylist(py, value)
             }
         };
     }
 
-    try_convert!(value.as_int(uiua, ""));
-    try_convert!(value.as_num(uiua, ""));
-    try_convert!(value.as_string(uiua, ""));
-
-    if let Some(boxed) = value.as_box() {
-        return uiua_value_to_pyobject(py, &boxed.0, uiua);
+    match value {
+        Value::Num(arr) => convert!(arr),
+        Value::Byte(arr) => convert!(arr),
+        Value::Char(arr) => {
+            if value.shape.len() == 1 {
+                Ok(arr.elements().collect::<String>().into_pyobject(py)?.into_any())
+            } else {
+                convert!(arr)
+            }
+        }
+        Value::Complex(arr) => convert!(arr, {
+            let c = arr.elements().next().unwrap();
+            Ok(PyComplex::from_doubles(py, c.re, c.im).into_any())
+        }),
+        Value::Box(arr) => convert!(arr, {
+            uiua_value_to_pyobject(py, &arr.elements().next().unwrap().0)
+        }),
     }
+}
 
-    // If all conversions fail, raise a Type Error
-    Err(PyErr::new::<pyo3::exceptions::PyTypeError, _>(format!(
-        "Error converting Uiua type {} to a Python type",
-        value.type_name()
-    )))
+/// Convert a Uiua array to a Python list
+fn array_to_pylist<'py>(py: Python<'py>, value: &Value) -> PyResult<Bound<'py, PyAny>> {
+    let list = PyList::empty(py);
+    for i in 0..value.shape[0] {
+        list.append(uiua_value_to_pyobject(py, &value.row(i))?)?;
+    }
+    Ok(list.into_any())
 }

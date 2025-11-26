@@ -7,17 +7,17 @@ build:
 	maturin build --release
 
 lint:
-	uv run ruff check
-	uv run ty check
+	ruff check
+	ty check
 	cargo check
 	cargo clippy -- -D clippy::pedantic
 
 test:
-	uv run pytest
+	pytest
 
 format:
-	uv run ruff check --fix
-	uv run ruff format
+	ruff check --fix
+	ruff format
 	cargo clippy --fix --allow-dirty -- -D clippy::pedantic 
 	cargo fmt
 

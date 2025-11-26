@@ -1,8 +1,8 @@
 //! Python to Uiua conversions
 
 use pyo3::prelude::*;
-use pyo3::types::{PyFloat, PyInt, PyList, PyString};
-use uiua::{Uiua, Value};
+use pyo3::types::{PyComplex, PyFloat, PyInt, PyList, PyString};
+use uiua::{Complex, Uiua, Value};
 
 /// Convert Python object to Uiua Value
 pub fn pyobject_to_uiua_value(
@@ -10,26 +10,24 @@ pub fn pyobject_to_uiua_value(
     obj: &Bound<'_, PyAny>,
     uiua: &Uiua,
 ) -> PyResult<Value> {
-    // Try int
-    if let Ok(i) = obj.extract::<i64>() {
-        // Uiua uses f64 so precision loss expected for large ints
-        #[allow(clippy::cast_precision_loss)]
-        return Ok(Value::from(i as f64));
+    if obj.is_instance_of::<PyInt>() {
+        if let Ok(n) = obj.extract::<u8>() {
+            return Ok(Value::from(n));
+        }
+        return Ok(Value::from(obj.extract::<f64>()?));
     }
-
-    // Try float
-    if let Ok(f) = obj.extract::<f64>() {
-        return Ok(Value::from(f));
+    if obj.is_instance_of::<PyFloat>() {
+        return Ok(Value::from(obj.extract::<f64>()?));
     }
-
-    // Try string
-    if let Ok(s) = obj.extract::<String>() {
-        return Ok(Value::from(s.as_str()));
+    if obj.is_instance_of::<PyComplex>() {
+        let c = obj.cast::<PyComplex>()?;
+        return Ok(Value::from(Complex::new(c.real(), c.imag())));
     }
-
-    // Try list
-    if let Ok(list) = obj.cast::<PyList>() {
-        return pylist_to_uiua_value(py, list, uiua);
+    if obj.is_instance_of::<PyString>() {
+        return Ok(Value::from(obj.extract::<&str>()?));
+    }
+    if obj.is_instance_of::<PyList>() {
+        return pylist_to_uiua_value(py, obj.cast::<PyList>()?, uiua);
     }
 
     Err(PyErr::new::<pyo3::exceptions::PyTypeError, _>(format!(
@@ -40,27 +38,36 @@ pub fn pyobject_to_uiua_value(
 
 /// Convert Python list to Uiua Value
 fn pylist_to_uiua_value(py: Python<'_>, list: &Bound<'_, PyList>, uiua: &Uiua) -> PyResult<Value> {
-    let len = list.len();
-
-    if len == 0 {
+    if list.is_empty() {
         return Ok(Value::from_row_values_infallible(Vec::<Value>::new()));
     }
 
     let first = list.get_item(0)?;
 
-    // Try to convert to a numeric array
-    if first.is_instance_of::<PyInt>() || first.is_instance_of::<PyFloat>() {
-        if let Ok(nums) = list
+    // Try int array
+    if first.is_instance_of::<PyInt>()
+        && let Ok(bytes) = list
+            .iter()
+            .map(|item| item.extract::<u8>())
+            .collect::<PyResult<Vec<_>>>()
+    {
+        let values: Vec<Value> = bytes.into_iter().map(Value::from).collect();
+        return Ok(Value::from_row_values_infallible(values));
+    }
+
+    // Try float array
+    if (first.is_instance_of::<PyInt>() || first.is_instance_of::<PyFloat>())
+        && let Ok(nums) = list
             .iter()
             .map(|item| item.extract::<f64>())
             .collect::<PyResult<Vec<_>>>()
-        {
-            let values: Vec<Value> = nums.into_iter().map(Value::from).collect();
-            return Ok(Value::from_row_values_infallible(values));
-        }
+    {
+        let values: Vec<Value> = nums.into_iter().map(Value::from).collect();
+        return Ok(Value::from_row_values_infallible(values));
     }
-    // Try to convert to a string array
-    else if first.is_instance_of::<PyString>()
+
+    // Try string array
+    if first.is_instance_of::<PyString>()
         && let Ok(strings) = list
             .iter()
             .map(|item| item.extract::<String>())
@@ -72,7 +79,7 @@ fn pylist_to_uiua_value(py: Python<'_>, list: &Bound<'_, PyList>, uiua: &Uiua) -
         }
     }
 
-    // Fallback to a boxed array
+    // Fallback to boxed array
     pylist_to_boxed_uiua_value(py, list, uiua)
 }
 

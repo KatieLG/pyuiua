@@ -68,7 +68,7 @@ to an array if they're homogeneous with a well-defined shape, otherwise a box. A
 values will become an array when converted to python and back.
 
 - **Currently supports**: most scalars, multidimensional arrays, and boxed arrays
-- **Does not yet support**: complex numbers, maps, functions, or user-defined types
+- **Does not yet support**: bytes, maps, functions, or user-defined types
 
 ### Uiua → Python
 
