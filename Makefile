@@ -18,7 +18,7 @@ test:
 format:
 	uv run ruff check --fix
 	uv run ruff format
-	cargo clippy --fix -- -D clippy::pedantic
+	cargo clippy --fix --allow-dirty -- -D clippy::pedantic 
 	cargo fmt
 
 check: format lint test

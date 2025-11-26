@@ -63,6 +63,10 @@ fn uiua_scalar_to_pyobject<'py>(
     try_convert!(value.as_num(uiua, ""));
     try_convert!(value.as_string(uiua, ""));
 
+    if let Some(boxed) = value.as_box() {
+        return uiua_value_to_pyobject(py, &boxed.0, uiua);
+    }
+
     // If all conversions fail, raise a Type Error
     Err(PyErr::new::<pyo3::exceptions::PyTypeError, _>(format!(
         "Error converting Uiua type {} to a Python type",
