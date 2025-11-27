@@ -26,6 +26,22 @@ def test_scalar_to_uiua(uiua: Uiua, value: UiuaValue, expected_type: type) -> No
 
 
 @pytest.mark.parametrize(
+    "value,expected_result",
+    [
+        (b"abcd", [97, 98, 99, 100]),
+        (b"", []),
+        (b"\x00\xff", [0, 255]),
+    ],
+)
+def test_bytes(uiua: Uiua, value: UiuaValue, expected_result: list[int]) -> None:
+    uiua.push(value)
+    result = uiua.pop()
+    assert isinstance(result, list)
+    assert all(isinstance(b, int) for b in result)
+    assert result == expected_result
+
+
+@pytest.mark.parametrize(
     "code,expected_type,expected_value",
     [
         ("3.14", float, 3.14),

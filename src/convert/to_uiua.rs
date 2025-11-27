@@ -1,7 +1,7 @@
 //! Python to Uiua conversions
 
 use pyo3::prelude::*;
-use pyo3::types::{PyComplex, PyFloat, PyInt, PyList, PyString};
+use pyo3::types::{PyBytes, PyComplex, PyFloat, PyInt, PyList, PyString};
 use uiua::{Complex, Uiua, Value};
 
 /// Convert Python object to Uiua Value
@@ -25,6 +25,9 @@ pub fn pyobject_to_uiua_value(
     }
     if obj.is_instance_of::<PyString>() {
         return Ok(Value::from(obj.extract::<&str>()?));
+    }
+    if obj.is_instance_of::<PyBytes>() {
+        return Ok(Value::from(obj.extract::<Vec<u8>>()?));
     }
     if obj.is_instance_of::<PyList>() {
         return pylist_to_uiua_value(py, obj.cast::<PyList>()?, uiua);

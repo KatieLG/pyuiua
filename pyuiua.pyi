@@ -13,7 +13,7 @@ Example:
 
 from typing import TypeAlias
 
-UiuaValue: TypeAlias = int | float | str | list["UiuaValue"]
+UiuaValue: TypeAlias = int | float | str | bytes | complex | list["UiuaValue"]
 """Type representing the values that pyuiua supports for python <-> uiua conversion.
 
 Can be:
