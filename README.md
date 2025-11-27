@@ -16,30 +16,36 @@ or see dev setup below for building from source
 
 ## Example Usage
 
-### Basic Usage
+### Eval method
 
 ```python
 import pyuiua
 
-# Create a Uiua instance
+pyuiua.eval("+ 1 2")           # 3
+pyuiua.eval("/+", [1, 2, 3])   # 6
+pyuiua.eval("/×⇡₁10")          # 3628800 (10 factorial)
+pyuiua.eval("∩+", 1, 2, 3, 4)  # (3, 7)
+```
+
+### Persisted instance
+
+```python
+import pyuiua
+
 uiua = pyuiua.Uiua()
 
-# Basic evaluation - run code and pop result
-uiua.run("/×⇡₁10") # Calculate 10 factorial
-print(uiua.pop())  # 3628800
-
-# Push Python values onto the stack
+# Push Python values onto the stack and operate on them
 uiua.push(10)
 uiua.push(20)
-uiua.run("+") # Then run a Uiua operation
+uiua.run("+")
 print(uiua.pop())  # 30
 
 # Work with arrays
 uiua.push([1, 2, 3, 4, 5])
-uiua.run("/+")  # Sum the array
+uiua.run("/+")
 print(uiua.pop())  # 15
 
-# Inspect the stack without modifying it
+# Inspect the stack
 uiua.push(1)
 uiua.push(2)
 uiua.push(3)
@@ -52,12 +58,14 @@ uiua.clear()
 
 ## API Reference
 
-**`Uiua()`** - Create a Uiua instance
+**`pyuiua.eval(code, *args)`** - Run Uiua code with any number of inputs and return the resulting value or tuple or values (or None if no output)
+
+**`pyuiua.Uiua()`** - Create a Uiua instance
 
 - `uiua.push(value)` - Push a Python value onto the stack
-- `uiua.pop()` - Pop a value from the stack and return it as a python object
+- `uiua.pop()` - Pop a value from the stack and return it
 - `uiua.run(code)` - Execute Uiua code on the current stack
-- `uiua.stack()` - Inspect the stack without modifying it
+- `uiua.stack()` - Return all stack values as a list (without modifying)
 - `uiua.clear()` - Remove all values from the stack
 - `len(uiua)` - Get the number of values on the stack
 

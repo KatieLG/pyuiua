@@ -15,7 +15,7 @@ pub struct PyUiua {
 create_exception!(pyuiua, UiuaError, PyRuntimeError);
 
 // Convert any errors to a python UiuaError
-fn to_uiua_error(e: impl std::fmt::Display) -> PyErr {
+pub fn to_uiua_error(e: impl std::fmt::Display) -> PyErr {
     UiuaError::new_err(e.to_string())
 }
 

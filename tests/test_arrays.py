@@ -10,9 +10,13 @@ from pyuiua import Uiua, UiuaValue
         ("⇡5", int, [0, 1, 2, 3, 4]),
         ("[1.5 2.5 3.5]", float, [1.5, 2.5, 3.5]),
         ("[]", object, []),
+        ("[[1 2] [3 4]]", list, [[1, 2], [3, 4]]),
+        ("↯3_3 ⇡9", list, [[0, 1, 2], [3, 4, 5], [6, 7, 8]]),
+        ("[[[1 2][3 4]][[5 6][7 8]]]", list, [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]),
+        ("↯2_2 [1.1 2.2 3.3 4.4]", list, [[1.1, 2.2], [3.3, 4.4]]),
     ],
 )
-def test_flat_array_to_python(
+def test_array_to_python(
     uiua: Uiua, code: str, expected_item_type: type, expected: list[UiuaValue]
 ) -> None:
     uiua.run(code)
@@ -31,33 +35,12 @@ def test_flat_array_to_python(
         ([2234], float),
     ],
 )
-def test_flat_array_to_uiua(uiua: Uiua, value: list[UiuaValue], expected_item_type: type) -> None:
+def test_array_to_uiua(uiua: Uiua, value: list[UiuaValue], expected_item_type: type) -> None:
     uiua.push(value)
     result = uiua.pop()
     assert isinstance(result, list)
     assert result == value
     assert all(isinstance(x, expected_item_type) for x in result)
-
-
-@pytest.mark.parametrize(
-    "code,expected",
-    [
-        # 2D arrays
-        ("[[1 2] [3 4]]", [[1, 2], [3, 4]]),
-        ("↯3_3 ⇡9", [[0, 1, 2], [3, 4, 5], [6, 7, 8]]),
-        # 3D arrays
-        ("[[[1 2][3 4]][[5 6][7 8]]]", [[[1, 2], [3, 4]], [[5, 6], [7, 8]]]),
-        # 2D float array
-        ("↯2_2 [1.1 2.2 3.3 4.4]", [[1.1, 2.2], [3.3, 4.4]]),
-    ],
-)
-def test_multidimensional_array_conversions(
-    uiua: Uiua, code: str, expected: list[UiuaValue]
-) -> None:
-    uiua.run(code)
-    result = uiua.pop()
-    assert isinstance(result, list)
-    assert result == expected
 
 
 @pytest.mark.parametrize(

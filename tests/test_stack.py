@@ -1,6 +1,6 @@
 import pytest
 
-from pyuiua import Uiua, UiuaValue
+from pyuiua import Uiua
 
 
 @pytest.mark.parametrize(
@@ -21,12 +21,12 @@ def test_uiua_stack(uiua: Uiua, code: str, expected: list) -> None:
     assert result == expected
 
 
-def test_push_stack_order(uiua: Uiua) -> None:
+def test_stack_push(uiua: Uiua) -> None:
     uiua.push(0)
-    uiua.push(1)
-    uiua.push(2)
+    uiua.push("hello")
+    uiua.push(3.14)
 
-    assert uiua.stack() == [0, 1, 2]
+    assert uiua.stack() == [0, "hello", 3.14]
 
 
 @pytest.mark.parametrize(
@@ -38,16 +38,6 @@ def test_stack_pop(uiua: Uiua, code: str, expected_stack: list) -> None:
     uiua.run(code)
     assert uiua.stack() == expected_stack
     assert uiua.pop() == expected_stack.pop()
-
-
-@pytest.mark.parametrize(
-    "value,expected_stack",
-    [(42, [42]), ([1, 2, 3], [[1, 2, 3]]), ("hello", ["hello"])],
-)
-def test_push(uiua: Uiua, value: UiuaValue, expected_stack: list) -> None:
-    """Test pushing values onto the uiua stack"""
-    uiua.push(value)
-    assert uiua.stack() == expected_stack
 
 
 def test_clear_stack(uiua: Uiua) -> None:

@@ -194,4 +194,29 @@ class Uiua:
         """
         ...
 
-__all__ = ["Uiua", "UiuaError", "UiuaValue"]
+def eval(code: str, *args: UiuaValue) -> UiuaValue | tuple[UiuaValue, ...] | None:
+    """Run Uiua code with any number of inputs and return the result.
+
+    Args:
+        code: Uiua code to execute.
+        *args: Values to operate on, ingested right to left, like Uiua.
+
+    Returns:
+        - Single value if one result on stack
+        - Tuple if multiple results on stack
+        - None if resulting stack is empty
+
+    Raises:
+        UiuaError: If syntax or runtime errors are encountered.
+
+    Example:
+        >>> pyuiua.eval("+ 1 2")
+        3
+        >>> pyuiua.eval("/+", [1, 2, 3, 4, 5])
+        15
+        >>> pyuiua.eval("∩+", 1, 2, 3, 4)
+        (3, 7)
+    """
+    ...
+
+__all__ = ["Uiua", "UiuaError", "UiuaValue", "eval"]
