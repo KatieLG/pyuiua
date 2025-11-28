@@ -23,6 +23,6 @@ def test_eval(code: str, input_args: tuple[UiuaValue, ...], expected_result: Uiu
     assert pyuiua.eval(code, *input_args) == expected_result
 
 
-def test_eval_syntax_error() -> None:
+def test_eval_error() -> None:
     with pytest.raises(UiuaError):
         pyuiua.eval("+ 1")

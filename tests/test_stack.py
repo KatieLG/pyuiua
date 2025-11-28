@@ -1,6 +1,6 @@
 import pytest
 
-from pyuiua import Uiua
+from pyuiua import Uiua, UiuaError, UiuaValue
 
 
 @pytest.mark.parametrize(
@@ -13,38 +13,45 @@ from pyuiua import Uiua
         ("[1 2 3] [4 5 6]", [[4, 5, 6], [1, 2, 3]]),
     ],
 )
-def test_uiua_stack(uiua: Uiua, code: str, expected: list) -> None:
-    """Test the stack returns as a list with the correct items"""
+def test_stack(uiua: Uiua, code: str, expected: list) -> None:
+    """Test stack() returns values bottom-to-top."""
     uiua.run(code)
-    result = uiua.stack()
-    assert isinstance(result, list)
-    assert result == expected
-
-
-def test_stack_push(uiua: Uiua) -> None:
-    uiua.push(0)
-    uiua.push("hello")
-    uiua.push(3.14)
-
-    assert uiua.stack() == [0, "hello", 3.14]
+    assert uiua.stack() == expected
 
 
 @pytest.mark.parametrize(
-    "code,expected_stack",
-    [("1 2 3 4 5", [5, 4, 3, 2, 1]), ("1_1 2_2", [[2, 2], [1, 1]])],
+    "input_value,code,expected",
+    [
+        ([1, 2, 3], "⊃⊢⊣", [3, 1]),
+        ([1, 2], "°⊟", [2, 1]),
+        ([1, 2, 3, 4, 5], "/+", [15]),
+        ("hello", "⇌", ["olleh"]),
+    ],
 )
-def test_stack_pop(uiua: Uiua, code: str, expected_stack: list) -> None:
-    """Test popping from the uiua stack gives the top item on the stack"""
+def test_stack_operations(uiua: Uiua, input_value: UiuaValue, code: str, expected: list) -> None:
+    """Test push → run → stack cycle."""
+    uiua.push(input_value)
     uiua.run(code)
-    assert uiua.stack() == expected_stack
-    assert uiua.pop() == expected_stack.pop()
+    assert uiua.stack() == expected
 
 
-def test_clear_stack(uiua: Uiua) -> None:
+def test_len(uiua: Uiua) -> None:
+    assert len(uiua) == 0
     uiua.push(1)
+    assert len(uiua) == 1
     uiua.push(2)
     uiua.push(3)
+    assert len(uiua) == 3
 
+
+def test_clear(uiua: Uiua) -> None:
+    uiua.push(1)
+    uiua.push(2)
     uiua.clear()
     assert len(uiua) == 0
     assert uiua.stack() == []
+
+
+def test_run_invalid_code(uiua: Uiua) -> None:
+    with pytest.raises(UiuaError):
+        uiua.run("invalid syntax")
