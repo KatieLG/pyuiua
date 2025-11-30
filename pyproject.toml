@@ -1,6 +1,6 @@
 [project]
 name = "pyuiua"
-version = "0.0.8"
+version = "0.0.9"
 description = "Python bindings for the Uiua programming language."
 license = { file = "LICENSE" }
 authors = [{ name = "Katie Gardner" }]
