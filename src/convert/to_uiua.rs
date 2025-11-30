@@ -82,6 +82,19 @@ fn pylist_to_uiua_value(py: Python<'_>, list: &Bound<'_, PyList>, uiua: &Uiua) -
         }
     }
 
+    // Try homogeneous nested list
+    if first.is_instance_of::<PyList>() {
+        let row_values: PyResult<Vec<Value>> = list
+            .iter()
+            .map(|item| pylist_to_uiua_value(py, item.cast::<PyList>()?, uiua))
+            .collect();
+        if let Ok(rows) = row_values
+            && let Ok(value) = Value::from_row_values(rows, uiua)
+        {
+            return Ok(value);
+        }
+    }
+
     // Fallback to boxed array
     pylist_to_boxed_uiua_value(py, list, uiua)
 }
